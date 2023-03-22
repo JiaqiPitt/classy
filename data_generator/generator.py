@@ -3,7 +3,7 @@ import anndata as ad
 
 from tools.pdf import linear_pdf_generator,gaussian_pdf_generator 
 
-class Simulator:
+class D:
     
     def __init__(self, n_samples):
         self.n_samples = n_samples
@@ -52,4 +52,6 @@ class Simulator:
         adata.uns['pdf'] =  pdf_dict
 
         return adata
+    
+
     
