@@ -1,6 +1,6 @@
 def get_mapper():
     mapper = {
         "in": "gold",
-        "out": "gold"
+        "out": "royalblue"
     }
     return mapper

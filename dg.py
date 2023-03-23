@@ -1,1 +1,1 @@
-from . import data_generator
+from .data_generator import *

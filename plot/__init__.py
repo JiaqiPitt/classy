@@ -1,2 +1,2 @@
-from . import histogram
-from . import scatter
+from .histogram import histo
+from .scatter import scatt

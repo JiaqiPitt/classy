@@ -1,7 +1,7 @@
 import numpy as np
 import anndata as ad
 
-from tools.pdf import linear_pdf_generator,gaussian_pdf_generator 
+from ..tools.pdf import linear_pdf_generator,gaussian_pdf_generator 
 
 class D:
     
