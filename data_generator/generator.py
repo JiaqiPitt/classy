@@ -58,7 +58,8 @@ class D:
             raise ValueError('Boundary for points segregation must be within r range.')
 
         # Assign labels based on radius r
-        labels = np.where(r <= 1, 'in', 'out')
+        classes = np.where(r <= 1, 'in', 'out')
+        labels = np.where(r <= 1, 1, 0)
 
         adata = ad.AnnData(position)
         adata.var_names = ['r', 'theta']
@@ -66,6 +67,7 @@ class D:
         adata.obs['u'] = u  #uniform distributed random numbers
         adata.obs['r'] = r  # radial axis 
         adata.obs['theta'] = theta # angular axis
+        adata.obs['Classes'] = classes
         adata.obs['Labels'] = labels
         adata.uns['pdf'] =  pdf_dict
         adata.uns['n_samples'] = n_samples

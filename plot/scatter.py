@@ -9,12 +9,12 @@ def scatt(adata):
     r = adata.obs['r']
     
     # Assign colors based on radius r
-    labels = adata.obs['Labels'].tolist()
+    classes = adata.obs['Classes'].tolist()
     mapper = get_mapper()
 
     colors = []
-    for label in labels:
-        colors.append(mapper[label])
+    for in_out in classes:
+        colors.append(mapper[in_out])
 
     rticks = None if max(r) <= 1 else [i for i in range(1, int(r.max()))]
 
