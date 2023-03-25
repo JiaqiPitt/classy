@@ -16,8 +16,14 @@ def histo(adata):
 
     x = np.linspace(r.min(), r.max(), 10000) # For theoretical distribution plot
 
+    if pdf_type == 'Gaussian':
+       pdf_line = 2 * pdf(x)
+
+    else:
+       pdf_line = pdf(x)
+
     # Plot the histogram of the generated samples
-    plt.hist(r, bins=bins, density=True, alpha=0.5, label='Generated')    
-    plt.plot(x, pdf(x), 'r-', label = 'True')
+    plt.hist(r, bins=bins, density=True, alpha=0.5, label='Generated') 
+    plt.plot(x, pdf_line, 'r-', label = 'True')
     plt.legend()
     plt.show()

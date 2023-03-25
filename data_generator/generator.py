@@ -49,6 +49,9 @@ class D:
         u = np.random.uniform(size = n_samples) #uniform distributed random numbers
         r = pdf_quantile(u) # radial axis 
 
+        if pdf_type == 'Gaussian':
+            r = np.abs(r)
+
         theta = np.random.uniform(0, 2*np.pi, size=n_samples)  # angular axis
         position  = np.vstack((r, theta)).T 
 

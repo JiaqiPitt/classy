@@ -73,13 +73,13 @@ def gaussian_pdf_generator(mu, sigma, x_right_bound):
         raise ValueError("x right boundary must be positive.")
     
     # Define Gaussian pdf
-    pdf = lambda x: (1 / np.sqrt(2*np.pi*sigma**2)) * np.exp(-(x-mu)**2 / (2*sigma**2))
-
+    pdf = lambda x:  (1 / np.sqrt(2*np.pi*sigma**2)) * np.exp(-(x-mu)**2 / (2*sigma**2))
+    
     # Define cumulative distribution function for normalized pdf
     pdf_cdf = lambda x: 0.5 * (1 + erf((x-mu) / (sigma*np.sqrt(2))))
     
     # Define the quantile function for the pdf
-    pdf_quantile = lambda x: mu + sigma * np.sqrt(2) * erfinv(2*x - 1)
+    pdf_quantile = lambda x: mu + sigma * np.sqrt(2) * erfinv(2*x - 1) 
 
     x_range = [0, x_right_bound]
 
