@@ -4,3 +4,4 @@ def get_mapper():
         "out": "royalblue"
     }
     return mapper
+

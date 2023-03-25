@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def plot_decision_boundary(adata, type = 'prediction'):
+def visualize_nn(adata, type = 'prediction'):
     """Plots decision boundaries of model predicting on X in comparison to y.
     Source - https://github.com/mrdbourke/pytorch-deep-learning/blob/main/helper_functions.py (modified to use anndata data frame)
     """
