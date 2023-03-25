@@ -102,6 +102,9 @@ def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 1000
         if epoch % 100 == 0:
             print(f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test Loss: {test_loss:.5f}, Test Accuracy: {test_acc:.2f}%")
         
+    adata.uns['nn_model'] = model
+    
+    return adata
 
 
 

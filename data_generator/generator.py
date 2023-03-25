@@ -48,6 +48,7 @@ class D:
         # Use Monte Carlo method to generate data points
         u = np.random.uniform(size = n_samples) #uniform distributed random numbers
         r = pdf_quantile(u) # radial axis 
+
         theta = np.random.uniform(0, 2*np.pi, size=n_samples)  # angular axis
         position  = np.vstack((r, theta)).T 
 
@@ -64,7 +65,7 @@ class D:
         adata = ad.AnnData(position)
         adata.var_names = ['r', 'theta']
         adata.obs_names = [f"Point_{i:d}" for i in range(adata.n_obs)]
-        adata.obs['u'] = u  #uniform distributed random numbers
+        adata.uns['u'] = u  #uniform distributed random numbers
         adata.obs['r'] = r  # radial axis 
         adata.obs['theta'] = theta # angular axis
         adata.obs['Classes'] = classes
