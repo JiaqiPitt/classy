@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def visualize_svm(adata, train_or_test = 'test'):
+
+def visualize_rand_forest(adata, train_or_test = 'test'):
 
     X_train, X_test, Y_train, Y_test = adata.uns['pp_data'].values()
 
@@ -10,7 +11,7 @@ def visualize_svm(adata, train_or_test = 'test'):
     else:
         X_set, y_set =  X_test, Y_test
 
-    classifier = adata.uns['svm_result']['Classifier']
+    classifier = adata.uns['rand_forest_result']['Classifier']
 
 
     grid_r, grid_theta = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
@@ -27,5 +28,3 @@ def visualize_svm(adata, train_or_test = 'test'):
     for i, j in enumerate(np.unique(y_set)):
         ax.scatter(X_set[y_set == j, 1], X_set[y_set == j, 0],
                     s = 40, cmap = plt.cm.RdYlBu, label = j)
-        
-    

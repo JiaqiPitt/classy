@@ -23,7 +23,7 @@ def data_split(adata, test_size = 0.2, random_state = None):
     return adata
 
 
-def build_model(adata):
+def build_model(adata, act_type = 'ReLU'):
 
     class CircleBoundary(nn.Module):
         def __init__(self):
@@ -35,8 +35,11 @@ def build_model(adata):
             
 
         def forward(self, x):
-        # Intersperse the ReLU activation function between layers
-            return self.layer_3(self.relu(self.layer_2(self.relu(self.layer_1(x)))))
+            if type == 'ReLU':
+                 # Intersperse the ReLU activation function between layers
+                 return self.layer_3(self.relu(self.layer_2(self.relu(self.layer_1(x)))))
+            if type == 'Sigmoid':
+                 return self.layer_3(self.sigmoid(self.layer_2(self.sigmoid(self.layer_1(x)))))
     # Make device agnostic code
     device = "cuda" if torch.cuda.is_available() else "cpu"
 

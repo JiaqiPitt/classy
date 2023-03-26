@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def visualize_nn(adata, type = 'prediction'):
+def visualize_nn(adata, train_or_test = 'test'):
     """Plots decision boundaries of model predicting on X in comparison to y.
     Source - https://github.com/mrdbourke/pytorch-deep-learning/blob/main/helper_functions.py (modified to use anndata data frame)
     """
@@ -15,7 +15,7 @@ def visualize_nn(adata, type = 'prediction'):
     model.to("cpu")
     X_train, X_test,Y_train, Y_test= X_train.to("cpu"), X_test.to("cpu"), Y_train.to("cpu"), Y_test.to("cpu")
 
-    if type == 'prediction':
+    if train_or_test == 'test':
         X = X_test
         y = Y_test
     else:
