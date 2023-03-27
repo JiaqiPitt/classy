@@ -6,10 +6,10 @@ from sklearn import metrics
 def svm(adata, test_size = 0.2, random_state = None, use_noise = False):
 
     if use_noise:
-        X = adata.layers['noise_data']
+        X = adata.layers['noise_data'].X
     else:
         X = adata.X
-        
+
     y = adata.obs['Labels']
 
     # Segregate the data

@@ -7,7 +7,7 @@ import numpy as np
 def rand_forest(adata, test_size = 0.2, n_estimators = 1000, max_depth = 10, random_state = None, use_noise = False):
 
     if use_noise:
-        X = adata.layers['noise_data']
+        X = adata.layers['noise_data'].X
     else:
         X = adata.X
 
