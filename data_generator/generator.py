@@ -106,7 +106,7 @@ def add_gaussian_noise(adata, loc = 0, scale = 0.2, noise_direction = 'x'):
     position = position  = np.vstack((r, theta)).T 
 
     adata.layers['noise_data'] = ad.AnnData(position)
-    adata.uns['use_noise'] = True
+    adata.uns['noise'] = {'loc': loc, 'scale': scale, 'noise_direction': noise_direction}
 
     return adata
     
