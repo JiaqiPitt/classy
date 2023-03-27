@@ -19,7 +19,7 @@ def xgboost(adata,
             use_noise = False
             ):
     if use_noise:
-        X = adata.layers['noise_data']
+        X = adata.layers['noise_data'].X
     else:
         X = adata.X
 
