@@ -6,10 +6,10 @@ from ..tools.nn_test import accuracy_fn
 def data_split(adata, test_size = 0.2, random_state = None, use_noise = False):
 
     if use_noise:
-        X =  torch.from_numpy(adata.layers['noise_data']).type(torch.float)
+        X =  torch.from_numpy(adata.layers['noise_data'].X).type(torch.float)
     else:
         X = torch.from_numpy(adata.X).type(torch.float)
-        
+
     Y = torch.tensor(adata.obs['Labels'].values)
 
     if random_state == None:
