@@ -3,9 +3,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn import metrics
 
-def svm(adata, test_size = 0.2, random_state = None):
+def svm(adata, test_size = 0.2, random_state = None, use_noise = False):
 
-    X = adata.X
+    if use_noise:
+        X = adata.layers['noise_data']
+    else:
+        X = adata.X
+        
     y = adata.obs['Labels']
 
     # Segregate the data

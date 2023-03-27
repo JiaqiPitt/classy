@@ -79,5 +79,36 @@ class D:
 
         return adata
     
+def add_gaussian_noise(adata, loc = 0, scale = 0.2, noise_direction = 'x'):
+
+    r = adata.obs['r']
+    theta = adata.obs['theta']
+
+    x_0 = r * np.cos(theta)
+    y_0 = r * np.sin(theta)
+
+    noise = np.random.normal(loc=loc, scale = scale, size = adata.uns['n_samples'])
+
+    if noise_direction == 'x':
+        x = x_0 + noise
+        y = y_0
+    
+    elif noise_direction == 'y':
+        x = x_0
+        y = y_0 + noise
+    
+    else:
+        ValueError("noise_direction can either be 'x' or 'y'.")
+
+    r = np.sqrt(x**2 + y**2)
+    theta = np.arctan2(y, x)
+
+    position = position  = np.vstack((r, theta)).T 
+
+    adata.layers['noise_data'] = ad.AnnData(position)
+    adata.uns['use_noise'] = True
+
+    return adata
+    
  
     

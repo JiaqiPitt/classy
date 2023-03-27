@@ -1,1 +1,1 @@
-from .generator import D
+from .generator import D, add_gaussian_noise

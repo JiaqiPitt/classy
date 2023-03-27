@@ -5,20 +5,25 @@ from sklearn import metrics
 
 
 def xgboost(adata, 
-                test_size = 0.2,  
-                max_depth = 10, 
-                random_state = None, 
-                num_rounds = 100,
-                params = {'objective': 'binary:logistic',
-                          'eval_metric': 'error',
-                          'max_depth': 2,
-                          'eta': 0.1,
-                          'subsample': 0.5,
-                          'colsample_bytree': 1,
-                          'seed': 42},
-                ):
+            test_size = 0.2,  
+            max_depth = 10, 
+            random_state = None, 
+            num_rounds = 100,
+            params = {'objective': 'binary:logistic',
+                        'eval_metric': 'error',
+                        'max_depth': 2,
+                        'eta': 0.1,
+                        'subsample': 0.5,
+                        'colsample_bytree': 1,
+                        'seed': 42},
+            use_noise = False
+            ):
+    if use_noise:
+        X = adata.layers['noise_data']
+    else:
+        X = adata.X
 
-    X = adata.X
+    
     y = adata.obs['Labels']
 
     # Segregate the data
@@ -43,7 +48,7 @@ def xgboost(adata,
 def xgboost_evaluation(adata):
 
     y_test = adata.uns['xgboost_result']['data']['Y_test']
-    y_pred =  adata.uns['xgboost_result']['Y_prediction']
+    y_pred = adata.uns['xgboost_result']['Y_prediction']
 
     confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
