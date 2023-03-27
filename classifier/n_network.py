@@ -23,9 +23,9 @@ def data_split(adata, test_size = 0.2, random_state = None):
     return adata
 
 
-def build_model(adata, act_type = 'ReLU'):
+def build_model(adata, act_type = 'sigmoid'):
 
-    class CircleBoundary(nn.Module):
+    class CircleBoundary_ReLU(nn.Module):
         def __init__(self):
             super().__init__()
             self.layer_1 = nn.Linear(in_features=2, out_features=100)
@@ -35,22 +35,35 @@ def build_model(adata, act_type = 'ReLU'):
             
 
         def forward(self, x):
-            if type == 'ReLU':
-                 # Intersperse the ReLU activation function between layers
-                 return self.layer_3(self.relu(self.layer_2(self.relu(self.layer_1(x)))))
-            if type == 'Sigmoid':
-                 return self.layer_3(self.sigmoid(self.layer_2(self.sigmoid(self.layer_1(x)))))
+            return self.layer_3(self.relu(self.layer_2(self.relu(self.layer_1(x)))))
+
+    class CircleBoundary_Sigmoid(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.layer_1 = nn.Linear(in_features=2, out_features=100)
+            self.layer_2 = nn.Linear(in_features=100, out_features=100)
+            self.layer_3 = nn.Linear(in_features=100, out_features=1)
+            self.sigmoid = nn.Sigmoid() # <- add in ReLU activation function
+            
+
+        def forward(self, x):
+            return self.layer_3(self.sigmoid(self.layer_2(self.sigmoid(self.layer_1(x)))))
+    
     # Make device agnostic code
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    model = CircleBoundary().to(device)
+    if act_type == 'relu':
+        model = CircleBoundary_ReLU().to(device)
+    
+    if act_type == 'sigmoid':
+        model = CircleBoundary_Sigmoid().to(device)
 
     adata.uns['nn_model'] = model
 
     return adata
 
 
-def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 10000, lr = 0.1, anual_seed = None):
+def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 10000, lr = 0.1, anual_seed = 42):
 
     model = adata.uns['nn_model']
     X_train, X_test, Y_train, Y_test = adata.uns['pp_data'].values()
