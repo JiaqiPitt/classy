@@ -47,7 +47,7 @@ def build_model(adata, act_type = 'sigmoid'):
             self.layer_1 = nn.Linear(in_features=2, out_features=100)
             self.layer_2 = nn.Linear(in_features=100, out_features=100)
             self.layer_3 = nn.Linear(in_features=100, out_features=1)
-            self.sigmoid = nn.Sigmoid() # <- add in ReLU activation function
+            self.sigmoid = nn.Sigmoid() # <- add in sigmoidal activation function
             
 
         def forward(self, x):
