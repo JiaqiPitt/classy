@@ -10,12 +10,12 @@ def xgboost(adata,
             random_state = None, 
             num_rounds = 100,
             params = {'objective': 'binary:logistic',
-                        'eval_metric': 'error',
-                        'max_depth': 2,
-                        'eta': 0.1,
-                        'subsample': 0.5,
-                        'colsample_bytree': 1,
-                        'seed': 42},
+                      'eval_metric': 'error',
+                      'max_depth': 2,
+                      'eta': 0.1,
+                      'subsample': 0.5,
+                      'colsample_bytree': 1,
+                      'seed': 42},
             use_noise = False
             ):
     if use_noise:
