@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from sklearn.model_selection import train_test_split
 from ..tools.nn_test import accuracy_fn
+from sklearn import metrics
 
 def data_split(adata, test_size = 0.2, random_state = None, use_noise = False):
 
@@ -121,8 +122,30 @@ def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 1000
         # Print out what's happening
         if epoch % 100 == 0:
             print(f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test Loss: {test_loss:.5f}, Test Accuracy: {test_acc:.2f}%")
-        
-    adata.uns['nn_model'] = model
+    
+    adata.uns['nn_result'] = {'nn_model': model, 'data': adata.uns['pp_data'], 'Y_prediction': test_pred}
+    
+    return adata
+
+def nn_evaluation(adata):
+
+    y_test = adata.uns['nn_result']['data']['Y_test']
+    y_pred =  adata.uns['nn_result']['Y_prediction']
+
+    confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
+    accuracy_score = metrics.accuracy_score(y_test, y_pred)
+    precision_score = metrics.precision_score(y_test, y_pred)
+    recall_score = metrics.recall_score(y_test, y_pred)
+
+    print('Confusion matrix:\n', confusion_matrix)
+    print('Accuracy:', accuracy_score)
+    print('Precision:', precision_score)
+    print('Recall:', recall_score)
+
+    adata.uns['nn_evaluation'] = {'Confusion matrix': confusion_matrix, 
+                                           'Acuracy': accuracy_score, 
+                                           'Precision': precision_score, 
+                                           'Recall': recall_score}
     
     return adata
 
