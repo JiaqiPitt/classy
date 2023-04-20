@@ -3,11 +3,19 @@ import matplotlib.pyplot as plt
 
 from ..tools.utils import get_mapper
 
-def scatt(adata):
+
+def scatter_polar(adata, noise = False):
+
+    if noise:
+
+        theta = adata.obs['theta_noisy']
+        r = adata.obs['r_noisy']
+
+    else:
     
-    theta = adata.obs['theta']
-    r = adata.obs['r']
-    
+        theta = adata.obs['theta']
+        r = adata.obs['r']
+
     # Assign colors based on radius r
     classes = adata.obs['Classes'].tolist()
     mapper = get_mapper()
@@ -29,3 +37,40 @@ def scatt(adata):
     # Remove the grid lines
     ax.grid(visible=False)
     plt.show()
+
+
+def scatter_cartesian(adata, noise = False):
+
+    if noise:
+        
+        x = adata.obs['x_noisy']
+        y = adata.obs['y_noisy']
+
+    else:
+    
+        x = adata.obs['x_ori']
+        y = adata.obs['y_ori']
+    
+    # Assign colors based on radius r
+    classes = adata.obs['Classes'].tolist()
+    mapper = get_mapper()
+
+    colors = []
+    for in_out in classes:
+        colors.append(mapper[in_out])
+    
+    # Plot the resulting distribution of (x, y) as a scatter plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.scatter(x, y, s = 5, c = colors)
+    plt.axis('equal')
+    plt.show()
+
+
+def scatt(adata, coordinate = 'polar', noise = False):
+    
+    if coordinate == 'polar':
+        scatter_polar(adata, noise = noise)
+    
+    else:
+        scatter_cartesian(adata, noise = noise)

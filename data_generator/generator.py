@@ -105,10 +105,33 @@ def add_gaussian_noise(adata, loc = 0, scale = 0.2, noise_direction = 'x'):
 
     position = position  = np.vstack((r, theta)).T 
 
-    adata.layers['noise_data'] = ad.AnnData(position)
+    adata.layers['noise_data'] = position
+    adata.obs['r_noisy'] = r
+    adata.obs['theta_noisy'] = theta
     adata.uns['noise'] = {'loc': loc, 'scale': scale, 'noise_direction': noise_direction}
 
     return adata
+
+def transfer_polar_to_cartesian(adata):
     
- 
+    original_data = adata.X
+    x_ori = original_data[:,0] * np.cos(original_data[:,1])
+    y_ori = original_data[:,0] * np.sin(original_data[:,1])
+    data_cartesian = np.stack((x_ori, y_ori), axis = 1)
+
+    # x_ori = original_data[]
+    if 'noise_data' in adata.layers.keys():
+        noise_data = adata.layers['noise_data']
+        x_noisy = noise_data[:,0] * np.cos(noise_data[:,1])
+        y_noisy = noise_data[:,0] * np.sin(noise_data[:,1])
+        data_cartesian_noisy = np.stack((x_noisy, y_noisy), axis = 1)
+
+    adata.layers['data_cartesian'] = data_cartesian
+    adata.layers['data_cartesian_noisy'] = data_cartesian_noisy
+    adata.obs['x_ori'] = x_ori
+    adata.obs['y_ori'] = y_ori
+    adata.obs['x_noisy'] = x_noisy
+    adata.obs['y_noisy'] = y_noisy
+
+    return adata
     
