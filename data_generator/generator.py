@@ -96,13 +96,16 @@ def add_gaussian_noise(adata, loc = 0, scale = 0.2, noise_direction = 'x'):
     elif noise_direction == 'y':
         x = x_0
         y = y_0 + noise
+    elif noise_direction == 'polar':
+        r = r + noise
     
     else:
-        ValueError("noise_direction can either be 'x' or 'y'.")
+        ValueError("noise_direction can either be 'x', 'y'or 'polar'. ")
 
-    r = np.sqrt(x**2 + y**2)
-    theta = np.arctan2(y, x)
-
+    if noise_direction != 'polar':
+        r = np.sqrt(x**2 + y**2)
+        theta = np.arctan2(y, x)
+    
     position = position  = np.vstack((r, theta)).T 
 
     adata.layers['noise_data'] = position

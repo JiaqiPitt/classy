@@ -1,10 +1,15 @@
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
+
 import numpy as np
 
+def gp_classifier(adata, coordinate = 'polar', test_size = 0.2, kernel_type = 'RBF', random_state = None, use_noise = False):
+    """
+    Use Gaussian Process and Laplace Approximation to do binary classification.
 
-def rand_forest(adata, coordinate = 'polar', test_size = 0.2, n_estimators = 1000, max_depth = 10, random_state = None, use_noise = False):
+    """
 
     if coordinate == 'polar':
         if use_noise:
@@ -18,30 +23,33 @@ def rand_forest(adata, coordinate = 'polar', test_size = 0.2, n_estimators = 100
         else:
             X = adata.layers['data_cartesian']
     
-    else:
-        print('Either polar coordinate or cartesian coordinate is available.')
-
     y = adata.obs['Labels']
 
-    # Segregate the data
+     # Segregate the data
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size = test_size, random_state = random_state)
     X_train, X_test, Y_train, Y_test = np.array(X_train), np.array(X_test), np.array(Y_train), np.array(Y_test)
 
     adata.uns['pp_data'] = {'X_train': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test, 'Coordinate': coordinate}
+    
+    gp_classifier = GaussianProcessClassifier()
+    
+    if kernel_type == 'RBF':
+        gp_classifier = GaussianProcessClassifier(kernel=1.0 * RBF(1.0))
+        gp_classifier.fit(X_train, Y_train)
+    else:
+        gp_classifier.fit(X_train, Y_train)
 
-    # Train the random forest classifier
-    classifier = RandomForestClassifier(n_estimators = n_estimators, max_depth =  max_depth, random_state = random_state)
-    classifier.fit(X_train, Y_train)
-    Y_pred = classifier.predict(X_test)
+    Y_pred = gp_classifier.predict(X_test)
 
-    adata.uns['rand_forest_result'] = {'data': adata.uns['pp_data'], 'Classifier': classifier, 'Y_prediction': Y_pred}
+    adata.uns['gp_result'] = {'data': adata.uns['pp_data'], 'Classifier': gp_classifier, 'Y_prediction': Y_pred}
 
+    
     return adata
 
-def rand_forest_evaluation(adata):
+def gp_evaluation(adata):
 
-    y_test = adata.uns['rand_forest_result']['data']['Y_test']
-    y_pred =  adata.uns['rand_forest_result']['Y_prediction']
+    y_test = adata.uns['gp_result']['data']['Y_test']
+    y_pred = adata.uns['gp_result']['Y_prediction']
 
     confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
@@ -53,13 +61,9 @@ def rand_forest_evaluation(adata):
     print('Precision:', precision_score)
     print('Recall:', recall_score)
 
-    adata.uns['rand_forest_evaluation'] = {'Confusion matrix': confusion_matrix, 
-                                           'Acuracy': accuracy_score, 
-                                           'Precision': precision_score, 
-                                           'Recall': recall_score}
+    adata.uns['xgboost_evluation'] = {'Confusion matrix': confusion_matrix, 
+                                'Acuracy': accuracy_score, 
+                                'Precision': precision_score, 
+                                'Recall': recall_score}
     
     return adata
-
-
-
-

@@ -4,12 +4,19 @@ from sklearn.model_selection import train_test_split
 from ..tools.nn_test import accuracy_fn
 from sklearn import metrics
 
-def data_split(adata, test_size = 0.2, random_state = None, use_noise = False):
+def data_split(adata, coordinate = 'polar', test_size = 0.2, random_state = None, use_noise = False):
 
-    if use_noise:
-        X =  torch.from_numpy(adata.layers['noise_data'].X).type(torch.float)
-    else:
-        X = torch.from_numpy(adata.X).type(torch.float)
+    if coordinate == 'polar':
+        if use_noise:
+            X = torch.from_numpy(adata.layers['noise_data']).type(torch.float)
+        else:
+            X = torch.from_numpy(adata.X).type(torch.float)
+
+    elif coordinate == 'cartesian':
+        if use_noise:
+            X = torch.from_numpy(adata.layers['data_cartesian_noisy']).type(torch.float)
+        else:
+            X = torch.from_numpy((adata.layers['data_cartesian'])).type(torch.float)
 
     Y = torch.tensor(adata.obs['Labels'].values)
 
@@ -23,7 +30,7 @@ def data_split(adata, test_size = 0.2, random_state = None, use_noise = False):
                                                             Y, 
                                                             test_size = test_size, # 20% test, 80% train
                                                             random_state = random_state) # make the random split reproducible
-    adata.uns['pp_data'] = {'X_train': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test}
+    adata.uns['pp_data'] = {'X_train': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test, 'Coordinate': coordinate}
 
     return adata
 
@@ -71,7 +78,7 @@ def build_model(adata, act_type = 'sigmoid'):
 def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 10000, lr = 0.1, anual_seed = 42):
 
     model = adata.uns['nn_model']
-    X_train, X_test, Y_train, Y_test = adata.uns['pp_data'].values()
+    X_train, X_test, Y_train, Y_test, _ = adata.uns['pp_data'].values()
     # For meet loss function input requirement, change Y's data type to float
     Y_train = Y_train.float()
     Y_test = Y_test.float()

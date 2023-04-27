@@ -3,12 +3,23 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from sklearn import metrics
 
-def svm(adata, test_size = 0.2, random_state = None, use_noise = False):
+def svm(adata, coordinate = 'polar', test_size = 0.2, random_state = None, use_noise = False):
 
-    if use_noise:
-        X = adata.layers['noise_data'].X
+    if coordinate == 'polar':
+        if use_noise:
+            X = adata.layers['noise_data']
+        else:
+            X = adata.X
+    
+    elif coordinate == 'cartesian':
+        if use_noise:
+            X = adata.layers['data_cartesian_noisy']
+        else:
+            X = adata.layers['data_cartesian']
+    
     else:
-        X = adata.X
+        print('Either polar coordinate or cartesian coordinate is available.')
+
 
     y = adata.obs['Labels']
 
@@ -16,7 +27,7 @@ def svm(adata, test_size = 0.2, random_state = None, use_noise = False):
     X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size = test_size, random_state = random_state)
     X_train, X_test, Y_train, Y_test = np.array(X_train), np.array(X_test), np.array(Y_train), np.array(Y_test)
 
-    adata.uns['pp_data'] = {'X_train': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test}
+    adata.uns['pp_data'] = {'X_train': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test, 'Coordinate': coordinate}
 
     classifier = SVC(kernel='rbf')
     classifier.fit(X_train, Y_train)
