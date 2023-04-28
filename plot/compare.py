@@ -256,8 +256,6 @@ def compare_nn_act_func(adata,  coordinate = 'cartesian'):
     accuracy1 = adata1.uns['nn_evaluation']['Accuracy']
     accuracy2 = adata2.uns['nn_evaluation']['Accuracy']
     accuracy3 = adata3.uns['nn_evaluation']['Accuracy']
-
-    print(accuracy1)
     
     accuracy = [accuracy1, accuracy2, accuracy3]
     plt.bar(labels, accuracy)
