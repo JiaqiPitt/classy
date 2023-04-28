@@ -259,6 +259,7 @@ def compare_nn_act_func(adata,  coordinate = 'cartesian'):
     
     accuracy = [accuracy1, accuracy2, accuracy3]
     plt.bar(labels, accuracy)
+    plt.ylim(bottom=0.7)
     plt.xlabel("Activation function type")
     plt.ylabel("Accuracy")
     plt.title("Neuron network accuracy with repect to activation functoin type")

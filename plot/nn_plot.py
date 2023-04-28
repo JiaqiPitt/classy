@@ -90,7 +90,7 @@ def visualize_nn_cartesian(adata, train_or_test = 'test'):
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.contourf(grid_x, grid_y, y_pred, cmap=plt.cm.RdYlBu, alpha=0.7)
+    ax.contourf(grid_x, grid_y, y_pred, cmap=plt.cm.RdYlBu, alpha=0.7, extend='both')
     ax.scatter (X[:, 0], X[:,1], c = y, s = 40, cmap = plt.cm.RdYlBu)
 
 
