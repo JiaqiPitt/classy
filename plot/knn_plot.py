@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def visualize_svm_polar(adata, train_or_test = 'test'):
+def visualize_knn_polar(adata, train_or_test = 'test'):
 
     X_train, X_test, Y_train, Y_test, _ = adata.uns['pp_data'].values()
 
@@ -10,7 +10,7 @@ def visualize_svm_polar(adata, train_or_test = 'test'):
     else:
         X_set, y_set =  X_test, Y_test
 
-    classifier = adata.uns['svm_result']['Classifier']
+    classifier = adata.uns['knn_result']['Classifier']
 
 
     grid_r, grid_theta = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
@@ -29,7 +29,7 @@ def visualize_svm_polar(adata, train_or_test = 'test'):
                     s = 40, cmap = plt.cm.RdYlBu, label = j)
     
 
-def visualize_svm_cartesian(adata, train_or_test = 'test'):
+def visualize_knn_cartesian(adata, train_or_test = 'test'):
 
     X_train, X_test, Y_train, Y_test, _ = adata.uns['pp_data'].values()
 
@@ -38,7 +38,7 @@ def visualize_svm_cartesian(adata, train_or_test = 'test'):
     else:
         X_set, y_set =  X_test, Y_test
 
-    classifier = adata.uns['svm_result']['Classifier']
+    classifier = adata.uns['knn_result']['Classifier']
 
 
     # grid_r, grid_theta = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
@@ -58,17 +58,16 @@ def visualize_svm_cartesian(adata, train_or_test = 'test'):
         ax.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
                     s = 40, cmap = plt.cm.RdYlBu, label = j)
 
-def visualize_svm(adata, train_or_test = 'test'):
+def visualize_knn(adata, train_or_test = 'test'):
 
     # get coordinate type
     _ ,_, _, _, coord = adata.uns['pp_data'].values()
 
     if coord == 'polar':
-        visualize_svm_polar(adata, train_or_test = train_or_test)
+        visualize_knn_polar(adata, train_or_test = train_or_test)
     
     elif coord == 'cartesian':
-        visualize_svm_cartesian(adata, train_or_test = train_or_test)
+        visualize_knn_cartesian(adata, train_or_test = train_or_test)
     
     else:
         print('Currently only support polar or cartesian coordiante.')
-    

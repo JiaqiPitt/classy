@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from ..tools.utils import get_mapper
+from ..tools.utils import get_mapper_in_out, get_mapper_clusters
 
 
 def scatter_polar(adata, noise = False):
@@ -18,11 +18,18 @@ def scatter_polar(adata, noise = False):
 
     # Assign colors based on radius r
     classes = adata.obs['Classes'].tolist()
-    mapper = get_mapper()
+
+    generate_method = adata.uns['generate_method']
+
+    if generate_method == 'mc':
+        mapper = get_mapper_in_out()
+    
+    else:
+        mapper = get_mapper_clusters()
 
     colors = []
-    for in_out in classes:
-        colors.append(mapper[in_out])
+    for i in classes:
+        colors.append(mapper[i])
 
     rticks = None if max(r) <= 1 else [i for i in range(1, int(r.max()))]
 
@@ -38,7 +45,6 @@ def scatter_polar(adata, noise = False):
     ax.grid(visible=False)
     plt.show()
 
-
 def scatter_cartesian(adata, noise = False):
 
     if noise:
@@ -53,7 +59,13 @@ def scatter_cartesian(adata, noise = False):
     
     # Assign colors based on radius r
     classes = adata.obs['Classes'].tolist()
-    mapper = get_mapper()
+    generate_method = adata.uns['generate_method']
+
+    if generate_method == 'mc':
+        mapper = get_mapper_in_out()
+    
+    else:
+        mapper = get_mapper_clusters()
 
     colors = []
     for in_out in classes:
@@ -74,3 +86,4 @@ def scatt(adata, coordinate = 'polar', noise = False):
     
     else:
         scatter_cartesian(adata, noise = noise)
+

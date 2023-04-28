@@ -46,7 +46,7 @@ def gp_classifier(adata, coordinate = 'polar', test_size = 0.2, kernel_type = 'R
     
     return adata
 
-def gp_evaluation(adata):
+def gp_evaluation(adata, print_evaluation_result = True):
 
     y_test = adata.uns['gp_result']['data']['Y_test']
     y_pred = adata.uns['gp_result']['Y_prediction']
@@ -55,14 +55,15 @@ def gp_evaluation(adata):
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
     precision_score = metrics.precision_score(y_test, y_pred)
     recall_score = metrics.recall_score(y_test, y_pred)
+    if print_evaluation_result:
+        print('gaussian process evaluation:')
+        print('Confusion matrix:\n', confusion_matrix)
+        print('Accuracy:', accuracy_score)
+        print('Precision:', precision_score)
+        print('Recall:', recall_score)
 
-    print('Confusion matrix:\n', confusion_matrix)
-    print('Accuracy:', accuracy_score)
-    print('Precision:', precision_score)
-    print('Recall:', recall_score)
-
-    adata.uns['xgboost_evluation'] = {'Confusion matrix': confusion_matrix, 
-                                'Acuracy': accuracy_score, 
+    adata.uns['gp_evaluation'] = {'Confusion matrix': confusion_matrix, 
+                                'Accuracy': accuracy_score, 
                                 'Precision': precision_score, 
                                 'Recall': recall_score}
     

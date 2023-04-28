@@ -50,7 +50,7 @@ def visualize_gp_cartesian(adata, train_or_test = 'test'):
                 cmap=plt.cm.RdYlBu, alpha=0.7)
     
     for i, j in enumerate(np.unique(y_set)):
-        ax.scatter(X_set[y_set == j, 1], X_set[y_set == j, 0],
+        ax.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
                     s = 40, cmap = plt.cm.RdYlBu, label = j)
 
 def visualize_gp(adata, train_or_test = 'test'):

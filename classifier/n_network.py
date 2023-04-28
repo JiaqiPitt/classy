@@ -60,6 +60,18 @@ def build_model(adata, act_type = 'sigmoid'):
 
         def forward(self, x):
             return self.layer_3(self.sigmoid(self.layer_2(self.sigmoid(self.layer_1(x)))))
+        
+    class CircleModel_Linear(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.layer_1 = nn.Linear(in_features=2, out_features=100)
+            self.layer_2 = nn.Linear(in_features=100, out_features=100)
+            self.layer_3 = nn.Linear(in_features=100, out_features=1)
+        
+        def forward(self, x):
+        
+            return self.layer_3(self.layer_2(self.layer_1(x))) 
+
     
     # Make device agnostic code
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -70,12 +82,15 @@ def build_model(adata, act_type = 'sigmoid'):
     if act_type == 'sigmoid':
         model = CircleBoundary_Sigmoid().to(device)
 
+    if act_type == 'linear':
+        model = CircleModel_Linear().to(device)
+
     adata.uns['nn_model'] = model
 
     return adata
 
 
-def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 10000, lr = 0.1, anual_seed = 42):
+def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 10000, lr = 0.1, anual_seed = 42, check_progress = False):
 
     model = adata.uns['nn_model']
     X_train, X_test, Y_train, Y_test, _ = adata.uns['pp_data'].values()
@@ -128,34 +143,56 @@ def train(adata, loss_fn = 'BCEWithLogitsLoss', optimizer = 'SGD', epochs = 1000
 
         # Print out what's happening
         if epoch % 100 == 0:
-            print(f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test Loss: {test_loss:.5f}, Test Accuracy: {test_acc:.2f}%")
+            if check_progress:
+                print(f"Epoch: {epoch} | Loss: {loss:.5f}, Accuracy: {acc:.2f}% | Test Loss: {test_loss:.5f}, Test Accuracy: {test_acc:.2f}%")
     
     adata.uns['nn_result'] = {'nn_model': model, 'data': adata.uns['pp_data'], 'Y_prediction': test_pred}
     
     return adata
 
-def nn_evaluation(adata):
+def nn_evaluation(adata, print_evaluation_result = True):
 
     y_test = adata.uns['nn_result']['data']['Y_test']
-    y_pred =  adata.uns['nn_result']['Y_prediction']
+    y_pred = adata.uns['nn_result']['Y_prediction']
 
     confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
     precision_score = metrics.precision_score(y_test, y_pred)
     recall_score = metrics.recall_score(y_test, y_pred)
 
-    print('Confusion matrix:\n', confusion_matrix)
-    print('Accuracy:', accuracy_score)
-    print('Precision:', precision_score)
-    print('Recall:', recall_score)
+    if print_evaluation_result:
+        print('neuron network evaluation:')
+        print('Confusion matrix:\n', confusion_matrix)
+        print('Accuracy:', accuracy_score)
+        print('Precision:', precision_score)
+        print('Recall:', recall_score)
 
     adata.uns['nn_evaluation'] = {'Confusion matrix': confusion_matrix, 
-                                           'Acuracy': accuracy_score, 
+                                           'Accuracy': accuracy_score, 
                                            'Precision': precision_score, 
                                            'Recall': recall_score}
     
     return adata
 
+
+def neuron(adata, 
+       coordinate = 'polar', 
+       test_size = 0.2, 
+       random_state = None, 
+       use_noise = False,
+       act_type = 'sigmoid',
+       loss_fn = 'BCEWithLogitsLoss', 
+       optimizer = 'SGD', 
+       epochs = 10000, 
+       lr = 0.1, 
+       anual_seed = 42, 
+       check_progress = False):
+    
+    data_split(adata, coordinate = coordinate, test_size = test_size, random_state = random_state, use_noise = use_noise)
+    build_model(adata, act_type = act_type)
+    train(adata, loss_fn = loss_fn, optimizer = optimizer, epochs = epochs, lr = lr, anual_seed = anual_seed, check_progress = check_progress)
+
+    return adata
 
 
 

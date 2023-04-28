@@ -11,7 +11,7 @@ def visualize_rand_forest_polar(adata, train_or_test = 'test'):
     else:
         X_set, y_set =  X_test, Y_test
 
-    classifier = adata.uns['svm_result']['Classifier']
+    classifier = adata.uns['rand_forest_result']['Classifier']
 
 
     grid_r, grid_theta = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
@@ -38,7 +38,7 @@ def visualize_rand_forest_cartesian(adata, train_or_test = 'test'):
     else:
         X_set, y_set =  X_test, Y_test
 
-    classifier = adata.uns['svm_result']['Classifier']
+    classifier = adata.uns['rand_forest_result']['Classifier']
 
 
     # grid_r, grid_theta = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
@@ -55,7 +55,7 @@ def visualize_rand_forest_cartesian(adata, train_or_test = 'test'):
                 cmap=plt.cm.RdYlBu, alpha=0.7)
     
     for i, j in enumerate(np.unique(y_set)):
-        ax.scatter(X_set[y_set == j, 1], X_set[y_set == j, 0],
+        ax.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
                     s = 40, cmap = plt.cm.RdYlBu, label = j)
 
 def visualize_rand_forest(adata, train_or_test = 'test'):

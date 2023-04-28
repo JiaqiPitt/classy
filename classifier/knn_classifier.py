@@ -1,24 +1,11 @@
-import numpy as np
-import xgboost as xgb
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import numpy as np
 from sklearn import metrics
 
-def xgboost(adata, 
-            coordinate = 'polar',
-            test_size = 0.2,  
-            max_depth = 10, 
-            random_state = None, 
-            num_rounds = 100,
-            params = {'objective': 'binary:logistic',
-                      'eval_metric': 'error',
-                      'max_depth': 2,
-                      'eta': 0.1,
-                      'subsample': 0.5,
-                      'colsample_bytree': 1,
-                      'seed': 42},
-            use_noise = False
-            ):
-
+def knn(adata, coordinate = 'polar', test_size = 0.2, random_state = None, use_noise = False):
     if coordinate == 'polar':
         if use_noise:
             X = adata.layers['noise_data']
@@ -30,8 +17,10 @@ def xgboost(adata,
             X = adata.layers['data_cartesian_noisy']
         else:
             X = adata.layers['data_cartesian']
-
     
+    else:
+        print('Either polar coordinate or cartesian coordinate is available.')
+
     y = adata.obs['Labels']
 
     # Segregate the data
@@ -39,38 +28,36 @@ def xgboost(adata,
     X_train, X_test, Y_train, Y_test = np.array(X_train), np.array(X_test), np.array(Y_train), np.array(Y_test)
 
     adata.uns['pp_data'] = {'X_train': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test, 'Coordinate': coordinate}
-
-    # Train the XGBoost classifier
-    dtrain = xgb.DMatrix(X_train, label = Y_train)
-    classifier = xgb.train(params, dtrain, num_rounds)
-
-    # Make predictions on the test set
-    dtest = xgb.DMatrix(X_test)
-    Y_pred = np.where(classifier.predict(dtest) > 0.5, 1, 0)
-
-    adata.uns['xgboost_result'] = {'data': adata.uns['pp_data'], 'Classifier': classifier, 'Y_prediction': Y_pred}
-
-    return adata
-
     
-def xgboost_evaluation(adata, print_evaluation_result = True):
+    # Create a KNN classifier with k=3
+    classifier = KNeighborsClassifier(n_neighbors=3)
 
-    y_test = adata.uns['xgboost_result']['data']['Y_test']
-    y_pred = adata.uns['xgboost_result']['Y_prediction']
+    # Train the classifier on the training set
+    classifier.fit(X_train, Y_train)
+
+    # Use the classifier to predict the test set
+    Y_pred = classifier.predict(X_test)
+
+    adata.uns['knn_result'] = {'data': adata.uns['pp_data'], 'Classifier': classifier, 'Y_prediction': Y_pred}
+
+def knn_evaluation(adata, print_evaluation_result = True):
+
+    y_test = adata.uns['knn_result']['data']['Y_test']
+    y_pred =  adata.uns['knn_result']['Y_prediction']
 
     confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
     precision_score = metrics.precision_score(y_test, y_pred)
     recall_score = metrics.recall_score(y_test, y_pred)
-
     if print_evaluation_result:
-        print('xgboost evaluation:')
+
+        print('knn evaluation:')
         print('Confusion matrix:\n', confusion_matrix)
         print('Accuracy:', accuracy_score)
         print('Precision:', precision_score)
         print('Recall:', recall_score)
 
-    adata.uns['xgboost_evaluation'] = {'Confusion matrix': confusion_matrix, 
+    adata.uns['knn_evaluation'] = {'Confusion matrix': confusion_matrix, 
                                 'Accuracy': accuracy_score, 
                                 'Precision': precision_score, 
                                 'Recall': recall_score}

@@ -38,7 +38,7 @@ def rand_forest(adata, coordinate = 'polar', test_size = 0.2, n_estimators = 100
 
     return adata
 
-def rand_forest_evaluation(adata):
+def rand_forest_evaluation(adata, print_evaluation_result = True):
 
     y_test = adata.uns['rand_forest_result']['data']['Y_test']
     y_pred =  adata.uns['rand_forest_result']['Y_prediction']
@@ -48,13 +48,15 @@ def rand_forest_evaluation(adata):
     precision_score = metrics.precision_score(y_test, y_pred)
     recall_score = metrics.recall_score(y_test, y_pred)
 
-    print('Confusion matrix:\n', confusion_matrix)
-    print('Accuracy:', accuracy_score)
-    print('Precision:', precision_score)
-    print('Recall:', recall_score)
+    if print_evaluation_result:
+        print('random forest evaluation:')
+        print('Confusion matrix:\n', confusion_matrix)
+        print('Accuracy:', accuracy_score)
+        print('Precision:', precision_score)
+        print('Recall:', recall_score)
 
     adata.uns['rand_forest_evaluation'] = {'Confusion matrix': confusion_matrix, 
-                                           'Acuracy': accuracy_score, 
+                                           'Accuracy': accuracy_score, 
                                            'Precision': precision_score, 
                                            'Recall': recall_score}
     
