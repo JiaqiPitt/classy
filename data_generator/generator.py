@@ -157,7 +157,7 @@ class D:
 
 
     
-def add_gaussian_noise(adata, loc = 0, scale = 3, noise_direction = 'polar'):
+def add_gaussian_noise(adata, loc = 0, scale = 5, noise_direction = 'polar'):
 
     r = adata.obs['r']
     theta = adata.obs['theta']
