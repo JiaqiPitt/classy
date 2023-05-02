@@ -184,7 +184,7 @@ def add_gaussian_noise(adata, loc = 0, scale = 5, noise_direction = 'polar'):
         r = np.sqrt(x**2 + y**2)
         theta = np.arctan2(y, x)
     
-    position = position  = np.vstack((r, theta)).T 
+    position = np.vstack((r, theta)).T 
 
     adata.layers['noise_data'] = position
     adata.obs['r_noisy'] = r
@@ -234,7 +234,7 @@ def transfer_cartesian_to_polar(adata):
     adata_transfered.uns['generate_method'] = adata.uns['generate_method']
 
     adata_transfered.obs['r'] = r
-    adata_transfered.obs['theta'] = theta
+    adata_transfered.obs['theta'] = theta   
 
     return adata_transfered
     

@@ -129,8 +129,10 @@ def plot_compare_result(adata, factor = 'noise', print_evaluation_result = False
     labels = ['neuron network', 'gaussian process', 'svm', 'random forest', 'xgboost', 'knn']
 
     if factor == 'noise':
-        adata1 =  compare_models(adata, use_noise = False, print_evaluation_result = print_evaluation_result) # no noise
-        adata2 = compare_models(adata, use_noise = True, print_evaluation_result = print_evaluation_result)# with noise
+        adata1 = adata.copy()
+        adata2 = adata.copy()
+        adata1 =  compare_models(adata1, use_noise = False, print_evaluation_result = print_evaluation_result) # no noise
+        adata2 = compare_models(adata2, use_noise = True, print_evaluation_result = print_evaluation_result)# with noise
 
         accuracy1 = [adata1.uns['nn_evaluation']['Accuracy'], 
                     adata1.uns['gp_evaluation']['Accuracy'],
@@ -159,8 +161,10 @@ def plot_compare_result(adata, factor = 'noise', print_evaluation_result = False
         plt.xticks([i + bar_width/2 for i in range(len(accuracy1))], labels, rotation=45, ha='right')
     
     elif factor == 'coordinate':
-        adata1 = compare_models(adata, coordinate = 'polar', print_evaluation_result = print_evaluation_result)
-        adata2 = compare_models(adata, coordinate = 'cartesian', print_evaluation_result = print_evaluation_result)
+        adata1 = adata.copy()
+        adata2 = adata.copy()
+        adata1 = compare_models(adata1, coordinate = 'polar', print_evaluation_result = print_evaluation_result)
+        adata2 = compare_models(adata2, coordinate = 'cartesian', print_evaluation_result = print_evaluation_result)
 
         accuracy1 = [adata1.uns['nn_evaluation']['Accuracy'], 
                     adata1.uns['gp_evaluation']['Accuracy'],
@@ -190,9 +194,12 @@ def plot_compare_result(adata, factor = 'noise', print_evaluation_result = False
 
     
     elif factor == 'test_size':
-        adata1 = compare_models(adata, test_size = 0.1, print_evaluation_result = print_evaluation_result)
-        adata2 = compare_models(adata, test_size = 0.3, print_evaluation_result = print_evaluation_result)
-        adata3 = compare_models(adata, test_size = 0.5, print_evaluation_result = print_evaluation_result)
+        adata1 = adata.copy()
+        adata2 = adata.copy()
+        adata3 = adata.copy()
+        adata1 = compare_models(adata1, test_size = 0.1, print_evaluation_result = print_evaluation_result)
+        adata2 = compare_models(adata2, test_size = 0.3, print_evaluation_result = print_evaluation_result)
+        adata3 = compare_models(adata3, test_size = 0.5, print_evaluation_result = print_evaluation_result)
         
         accuracy1 = [adata1.uns['nn_evaluation']['Accuracy'], 
                     adata1.uns['gp_evaluation']['Accuracy'],
@@ -234,7 +241,7 @@ def plot_compare_result(adata, factor = 'noise', print_evaluation_result = False
         ValueError('currently only support noise, coordinate and test size comparison.')
 
 
-    plt.ylim(bottom=0.7)
+    plt.ylim(bottom=0.4)
     plt.xlabel('Classifiers')
     plt.ylabel('Accuracy')
     plt.title(r'Accuracy with respect to %s'%factor)
